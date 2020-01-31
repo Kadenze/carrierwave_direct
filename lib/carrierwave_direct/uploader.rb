@@ -12,8 +12,6 @@ module CarrierWaveDirect
     FILENAME_WILDCARD = "${filename}"
 
     included do
-      storage :fog
-
       attr_accessor :success_action_redirect
       attr_accessor :success_action_status
 
@@ -127,11 +125,23 @@ module CarrierWaveDirect
     end
 
     def direct_fog_url
-      CarrierWave::Storage::Fog::File.new(self, CarrierWave::Storage::Fog.new(self), nil).public_url
+      if self.class.storage.name.match(/::Fog\z/)
+        CarrierWave::Storage::Fog::File.new(
+          self,
+          CarrierWave::Storage::Fog.new(self),
+          nil
+        ).public_url
+      else
+        "https://example.org/test/only"
+      end
     end
 
     def direct_fog_hash(policy_options = {})
-      signing_policy.direct_fog_hash(policy_options)
+      if self.class.storage.name.match(/::Fog\z/)
+        signing_policy.direct_fog_hash(policy_options)
+      else
+        { test: :only }
+      end
     end
 
     private
