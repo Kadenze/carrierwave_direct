@@ -17,7 +17,7 @@ module CarrierWaveDirect
 
       fog_credentials.keys.each do |key|
         define_method(key) do
-          fog_credentials[key]
+          fog_credentials[key].call rescue fog_credentials[key]
         end
       end
     end
