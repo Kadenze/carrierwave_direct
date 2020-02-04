@@ -13,6 +13,8 @@ module CarrierWaveDirect
           'X-Amz-Credential': credential,
           'X-Amz-Algorithm':  algorithm,
           'X-Amz-Date':       date,
+          "X-Amz-Security-Token": uploader.session_token,
+          success_action_redirect: uploader.success_action_redirect,
           uri:                uploader.direct_fog_url,
         }
       end
@@ -34,6 +36,7 @@ module CarrierWaveDirect
         conditions << ["starts-with", "$Content-Type", ""] if uploader.will_include_content_type
         conditions << {"bucket" => uploader.fog_directory}
         conditions << {"acl" => uploader.acl}
+        conditions << {"X-Amz-Security-Token" => uploader.session_token}
 
         if uploader.use_action_status
           conditions << {"success_action_status" => uploader.success_action_status}

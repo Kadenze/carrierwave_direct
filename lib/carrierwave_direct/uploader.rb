@@ -12,8 +12,9 @@ module CarrierWaveDirect
     FILENAME_WILDCARD = "${filename}"
 
     included do
-      attr_accessor :success_action_redirect
-      attr_accessor :success_action_status
+      attr_accessor :success_action_redirect,
+                    :success_action_status
+
 
       fog_credentials.keys.each do |key|
         define_method(key) do
