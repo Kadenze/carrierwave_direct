@@ -5,7 +5,7 @@ module CarrierWaveDirect
     class Aws4HmacSha256 < Base
 
       def direct_fog_hash(policy_options = {})
-        {
+        fog_hash = {
           key:                uploader.key,
           acl:                uploader.acl,
           policy:             policy(policy_options),
@@ -14,9 +14,14 @@ module CarrierWaveDirect
           'X-Amz-Algorithm':  algorithm,
           'X-Amz-Date':       date,
           "X-Amz-Security-Token": uploader.session_token,
-          success_action_redirect: uploader.success_action_redirect,
           uri:                uploader.direct_fog_url,
         }
+
+        if uploader.use_action_status
+          fog_hash.merge({ success_action_status: uploader.success_action_status })
+        else
+          fog_hash.merge({ success_action_redirect: uploader.success_action_redirect })
+        end
       end
 
       def date
